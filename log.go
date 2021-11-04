@@ -4,6 +4,7 @@
 package lucky_log
 
 import (
+	"fmt"
 	"path"
 	"runtime"
 	"strconv"
@@ -32,7 +33,7 @@ import (
 // 日志接口
 type ILogger interface {
 	// 初始化
-	//InitLogger(config ...interface{}) error
+	InitLogger(config ...interface{}) error
 	// 写日志
 	/*
 		Level:日志级别
@@ -43,8 +44,8 @@ type ILogger interface {
 	LogMsg(level Level, logogParams map[string]string, format string, args ...interface{}) error
 
 	// 退出
-	//Exit()
-	//Flush()
+	Exit()
+	Flush()
 	SetFormatter(format string)
 }
 
@@ -64,17 +65,27 @@ func (l *LuckLoggers) AppendLogger(logger ILogger) error {
 	l.Loggers = append(l.Loggers, logger)
 	return nil
 }
-func (l *LuckLoggers) Log(level Level, format string, args ...interface{}) error {
+func (l *LuckLoggers) getFormatMsg(f interface{}) string {
+	switch f.(type) {
+	case string:
+		return f.(string)
+	default:
+		return fmt.Sprint(f)
+	}
+
+}
+func (l *LuckLoggers) Log(level Level, f interface{}, args ...interface{}) error {
 	if len(l.Loggers) == 0 {
 		panic("还没有配置日志处理器！")
 	} else {
+		format := l.getFormatMsg(f)
 		//[%(asctime)s] %(filename)s[Line:%(lineno)d] [%(levelname)s]  %(message)s 【filepath:%(pathname)s】
 		funcName, file, line, ok := runtime.Caller(2)
 		if !ok {
 			panic("获取日志信息出错")
 		}
 		sysLogPars := map[string]string{
-			"time":      time.Now().Format(time.RFC3339),
+			"time":      time.Now().Format("2006-01-02 15:04:05.999"), //time.RFC3339Nano
 			"line":      strconv.Itoa(line),
 			"levelName": LevelStrMap[level],
 			"filePath":  file,

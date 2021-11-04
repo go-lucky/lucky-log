@@ -19,11 +19,11 @@ const (
 
 // 等级转字符串
 var LevelStrMap = map[Level]string{
-	TraceLevel:   "trace",
-	PrintLevel:   "print",
-	InfoLevel:    "info",
-	DebugLevel:   "debug",
-	WarningLevel: "warning",
-	ErrorLevel:   "error",
-	PanicLevel:   "panic",
+	TraceLevel:   "T",
+	PrintLevel:   "Pr",
+	InfoLevel:    "I",
+	DebugLevel:   "D",
+	WarningLevel: "W",
+	ErrorLevel:   "E",
+	PanicLevel:   "P",
 }

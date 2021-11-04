@@ -9,9 +9,9 @@ import (
 	"strings"
 )
 
-var  stdoutFormat string
-type StdoutLogger struct {
+var consoleFormat string
 
+type ConsoleLogger struct {
 }
 
 // 前景 背景 颜色
@@ -55,44 +55,37 @@ var levelColorFormatMap = map[Level][2]int{
 
 }
 
-func (l StdoutLogger) InitLogger(config ...interface{}) error {
+func (l ConsoleLogger) InitLogger(config ...interface{}) error {
 	return nil
 }
 
-func (l StdoutLogger) SetFormatter(format string) {
+func (l ConsoleLogger) SetFormatter(format string) {
 	if len(format) > 0 {
-		stdoutFormat = format
+		consoleFormat = format
 	}
 }
 
-// todo 未完成
-func (l StdoutLogger) LogMsg(level Level, logogParams map[string]string, format string, args ...interface{}) error {
+func (l ConsoleLogger) LogMsg(level Level, logogParams map[string]string, format string, args ...interface{}) error {
 	if _, ok := logogParams["message"]; !ok {
 		logogParams["message"] = fmt.Sprintf(format, args...)
 	}
 	var msgStr string
-	msgStr = stdoutFormat
-	if len(stdoutFormat) > 0 {
+	msgStr = consoleFormat
+	if len(consoleFormat) > 0 {
 		for k, v := range logogParams {
 			msgStr = strings.ReplaceAll(msgStr, fmt.Sprintf("[%s]", k), v)
 		}
 	}
-	//fmt.Printf("====1",msgStr,"====\n\n")
-	//msgStr = fmt.Sprintf(levelColorFormatMap[level], msgStr)
-	//fmt.Printf("====2",msgStr,"====\n\n")
-	fmt.Printf("%c[1;%d;%dm%s%c[0m\r\n", 0x1B, levelColorFormatMap[level][0], levelColorFormatMap[level][1], msgStr, 0x1B)
-	//fmt.Println()
-	//fmt.Printf("%c[%d;%d;%dm%s%c[0m", 0x1B, 1, 31, 40, msgStr, 0x1B)
-	//fmt.Print("0x1B[1;30;40m世界你好0x1B[0m")
 
-	//os.Stdout.WriteString(msgStr)
+	fmt.Printf("%c[1;%d;%dm%s%c[0m\r\n", 0x1B, levelColorFormatMap[level][0], levelColorFormatMap[level][1], msgStr, 0x1B)
+
 	return nil
 }
 
-func (l StdoutLogger) Exit() {
+func (l ConsoleLogger) Exit() {
 
 }
 
-func (l StdoutLogger) Flush() {
+func (l ConsoleLogger) Flush() {
 
 }
